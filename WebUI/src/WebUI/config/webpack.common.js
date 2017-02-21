@@ -19,7 +19,7 @@
                 test: /\.ts$/,
                 use: [{
                     loader: "awesome-typescript-loader",
-                    options: { configFileName: helpers.root("src", "tsconfig.json") }
+                    options: { configFileName: helpers.root("tsconfig.json") }
                 }, "angular2-template-loader"]
             }, {
                 test: /\.html$/,
@@ -56,27 +56,29 @@
                 exclude: helpers.root("src", "app"),
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
-                    use: [
-                        "css-loader?sourceMap",
-                        "postcss-loader"
-                    ]
-                }, {
-                    test: /\.css$/,
-                    include: helpers.root("src", "app"),
-                    use: "raw-loader"
+                    use: [{
+                        loader: "css-loader?sourceMap"
+                    }, {
+                        loader: "postcss-loader"
+                    }]
                 })
+            }, {
+                test: /\.css$/,
+                include: helpers.root("src", "app"),
+                use: "raw-loader"
+
             }]
         },
         plugins: [
             // Workaround for angular/angular#11580
-          new Webpack.ContextReplacementPlugin(
+          new webpack.ContextReplacementPlugin(
             // The (\\|\/) piece accounts for path separators in *nix and Windows
             /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
             helpers.root("./src"), // location of your src
             {} // a map of your routes
           ),
 
-          new Webpack.optimize.CommonsChunkPlugin({
+          new webpack.optimize.CommonsChunkPlugin({
               name: ["app", "vendor", "polyfills"]
           })
         ]
